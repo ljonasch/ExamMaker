@@ -1,0 +1,43 @@
+{
+  "name": "examforge-shareable",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "start": "next start -H 0.0.0.0 -p 3000",
+    "build": "next build",
+    "db:generate": "prisma generate",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "docker:start": "sh ./docker/entrypoint.sh",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "jszip": "^3.10.1",
+    "mammoth": "^1.8.0",
+    "next": "^15.0.3",
+    "openai": "^4.73.0",
+    "pdf-parse": "^1.1.1",
+    "prisma": "^5.22.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "xlsx": "^0.18.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.0.1",
+    "@types/node": "^22.9.0",
+    "@types/pdf-parse": "^1.1.4",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.15.0",
+    "eslint-config-next": "^15.0.3",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.5"
+  }
+}

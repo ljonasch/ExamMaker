@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Course {
+  id        String       @id @default(cuid())
+  title     String
+  createdAt DateTime     @default(now())
+  files     CourseFile[]
+  exams     Exam[]
+  usageRecords ApiUsageRecord[]
+}
+
+model CourseFile {
+  id            String   @id @default(cuid())
+  courseId      String
+  filename      String
+  mimeType      String
+  extractedText String
+  charCount     Int
+  createdAt     DateTime @default(now())
+  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+}
+
+model Exam {
+  id            String        @id @default(cuid())
+  courseId      String
+  title         String
+  settingsJson  String
+  questionsJson String
+  settingsHash  String
+  createdAt     DateTime      @default(now())
+  course        Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  attempts      ExamAttempt[]
+  usageRecords  ApiUsageRecord[]
+
+  @@index([courseId])
+  @@unique([courseId, settingsHash])
+}
+
+model ExamAttempt {
+  id          String   @id @default(cuid())
+  examId      String
+  sessionId   String
+  answersJson String   @default("{}")
+  gradedJson  String?
+  score       Float?
+  status      String   @default("in_progress")
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  exam        Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  usageRecords ApiUsageRecord[]
+
+  @@index([examId, sessionId])
+}
+
+model ApiUsageRecord {
+  id                String      @id @default(cuid())
+  courseId          String?
+  examId            String?
+  attemptId         String?
+  requestKey        String?
+  operationGroup    String
+  operationName     String
+  model             String
+  inputTokens       Int         @default(0)
+  cachedInputTokens Int         @default(0)
+  outputTokens      Int         @default(0)
+  totalTokens       Int         @default(0)
+  estimatedCostUsd  Float       @default(0)
+  metadataJson      String?
+  createdAt         DateTime    @default(now())
+  course            Course?     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  exam              Exam?       @relation(fields: [examId], references: [id], onDelete: Cascade)
+  attempt           ExamAttempt? @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@index([courseId, operationGroup])
+  @@index([examId, operationGroup])
+  @@index([attemptId, operationGroup])
+  @@index([requestKey])
+}
